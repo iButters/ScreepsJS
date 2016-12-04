@@ -1,9 +1,7 @@
-const mySettings = {
+ const mySettings = {
     'flagPriorities': {
         'Flag1' : 1.00,
-        'Flag2' : 0.90,
-        'Flag3' : 0.90,
-        'Flag4' : 0.95
+        'Flag2' : 0.90
     },
     
     'rolePriorities': {
@@ -19,7 +17,7 @@ const mySettings = {
         'Defender'      : 0.98,
         'Raider'        : 1.10
     },
-    
+
     'myRooms': {
         'W7N4': {
             'Flag1' : {
@@ -29,46 +27,19 @@ const mySettings = {
                 'Hauler'        : 2,
                 'Trader'        : 0,
                 'Repairer'      : 2,
-                'Builder'       : 0,
+                'Builder'       : 3,
                 'Upgrader'      : 1,
+                'LairHarvester' : 0
             },
-            
-            'Flag2' : {
-                'Harvester'   : 2,
-                'Distributor' : 2,
-                'Repairer'    : 1,
-                'Builder'     : 0,
-                'Upgrader'    : 0,
-                'Claimer'     : 1,
-                'Defender'    : 1
-            },
-
-            'Flag3' : {
-                'Harvester'   : 2,
-                'Distributor' : 2,
-                'Repairer'    : 1,
-                'Builder'     : 0,
-                'Upgrader'    : 0,
-                'Claimer'     : 1,
-                'Defender'    : 1
-            },
-            
-            'Flag4' : {
-                'Raider'        : 3,
-                'Distributor'   : 8,
-                'Repairer'      : 2,
-                'Builder'       : 0,
-                'Defender'      : 0
-            }
         }
     },
     
     'bodyparts': {
         'Harvester': {
-            'Level1' : { 'work': 1, 'carry' : 2, 'move' : 2 }, 'Level2' : { 'work': 4, 'carry' : 1, 'move' : 2 },
-            'Level3' : { 'work': 6, 'carry' : 1, 'move' : 3 }, 'Level4' : { 'work': 6, 'carry' : 1, 'move' : 3 },
-            'Level5' : { 'work': 6, 'carry' : 1, 'move' : 4 }, 'Level6' : { 'work': 6, 'carry' : 1, 'move' : 3 },
-            'Level7' : { 'work': 6, 'carry' : 1, 'move' : 3 }, 'Level8' : { 'work': 6, 'carry' : 1, 'move' : 3 }
+            'Level1' : { 'work': 2, 'carry' : 0, 'move' : 2 }, 'Level2' : { 'work': 4, 'carry' : 0, 'move' : 2 },
+            'Level3' : { 'work': 6, 'carry' : 0, 'move' : 3 }, 'Level4' : { 'work': 6, 'carry' : 0, 'move' : 3 },
+            'Level5' : { 'work': 6, 'carry' : 0, 'move' : 3 }, 'Level6' : { 'work': 6, 'carry' : 0, 'move' : 3 },
+            'Level7' : { 'work': 6, 'carry' : 0, 'move' : 3 }, 'Level8' : { 'work': 6, 'carry' : 0, 'move' : 3 }
         },
         
         'Miner': {
@@ -86,10 +57,10 @@ const mySettings = {
         },
         
         'Hauler' : {
-            'Level1' : {                           }, 'Level2' : {                           },
-            'Level3' : {                           }, 'Level4' : { 'carry' : 10, 'move' :  5 },
+            'Level1' : { 'carry' :  4, 'move' :  2 }, 'Level2' : { 'carry' :  6, 'move' :  3 },
+            'Level3' : { 'carry' : 10, 'move' :  5 }, 'Level4' : { 'carry' : 10, 'move' :  5 },
             'Level5' : { 'carry' : 10, 'move' :  5 }, 'Level6' : { 'carry' : 10, 'move' :  5 },
-            'Level7' : { 'carry' : 10, 'move' :  5 }, 'Level8' : { 'carry' : 10, 'move' :  5 }
+            'Level7' : { 'carry' : 30, 'move' : 15 }, 'Level8' : { 'carry' : 30, 'move' : 15 }
         },
         
         'Trader' : {
@@ -117,7 +88,7 @@ const mySettings = {
             'Level1' : { 'work':  1, 'carry' :   2,  'move' :  2 }, 'Level2' : { 'work':  4, 'carry' :   1, 'move' :  2 },
             'Level3' : { 'work':  6, 'carry' :   1,  'move' :  3 }, 'Level4' : { 'work': 10, 'carry' :   1, 'move' :  5 },
             'Level5' : { 'work': 14, 'carry' :   3,  'move' :  5 }, 'Level6' : { 'work': 16, 'carry' :   1, 'move' :  5 },
-            'Level7' : { 'work': 10, 'carry' :   10, 'move' : 10 }, 'Level8' : { 'work': 16, 'carry' :   1, 'move' :  5 }
+            'Level7' : { 'work': 10, 'carry' :   10, 'move' : 10 }, 'Level8' : { 'work':  1, 'carry' :   1, 'move' :  1 }
         },
         
         'Claimer': {    //TODO
@@ -126,12 +97,19 @@ const mySettings = {
             'Level5' : { 'claim': 2, 'move' : 2 }, 'Level6' : { 'claim': 2, 'move' : 2 },
             'Level7' : { 'claim': 2, 'move' : 2 }, 'Level8' : { 'claim': 2, 'move' : 2 }
         },
-        
+
+        'LairHarvester': {
+            'Level1' : {                                        }, 'Level2' : {                                       },
+            'Level3' : {                                        }, 'Level2' : {                                       },
+            'Level5' : {                                        }, 'Level2' : {                                       },
+            'Level7' : { 'move' : 15, 'attack' : 22, 'heal' : 8 }, 'Level8' : { 'move' : 15, 'attack' : 22, 'heal' : 8 }
+        },
+
         'Defender': { //TODO
-            'Level1' : {                                       }, 'Level2' : {                                       },
-            'Level3' : { 'move' : 2, 'attack' :  2, 'heal' : 2 }, 'Level4' : {  'move' : 4, 'attack' : 2, 'heal' : 1 },
-            'Level5' : { 'move' : 5, 'attack' :  6, 'heal' : 4 }, 'Level6' : {  'move' : 5, 'attack' : 6, 'heal' : 4 },
-            'Level7' : { 'move' : 9, 'attack' : 10, 'heal' : 8 }, 'Level8' : {  'move' : 5, 'attack' : 6, 'heal' : 4 }
+            'Level1' : {                                        }, 'Level2' : {                                       },
+            'Level3' : { 'move' :  2, 'attack' :  2, 'heal' : 2 }, 'Level4' : { 'move' :  4, 'attack' : 2, 'heal' : 1 },
+            'Level5' : { 'move' :  5, 'attack' :  6, 'heal' : 4 }, 'Level6' : { 'move' :  5, 'attack' : 6, 'heal' : 4 },
+            'Level7' : { 'move' : 15, 'attack' : 22, 'heal' : 8 }, 'Level8' : { 'move' : 15, 'attack' : 22, 'heal' : 8 }
         },
         
         'Raider': { //TODO

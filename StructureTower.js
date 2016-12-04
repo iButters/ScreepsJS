@@ -3,8 +3,9 @@ let structureTower = {
         let result;
         
         let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {
-            filter: (c) => c.pos.y > 0 && c.pos.x > 0 && c.pos.y < 49 && c.pos.x < 49
+            filter: (c) => (c.pos.y > 0 && c.pos.x > 0 && c.pos.y < 49 && c.pos.x < 49) || c.owner == "Invader"
         });
+
         result = tower.attack(closestHostile);
         switch (result) {
             case OK:
@@ -14,6 +15,7 @@ let structureTower = {
         let creepToHeal = tower.pos.findClosestByRange(FIND_MY_CREEPS, {
             filter: (c) => c.hits < c.hitsMax
         });
+
         result = tower.heal(creepToHeal);
         switch (result) {
             case OK:

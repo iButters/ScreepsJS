@@ -8,20 +8,20 @@ let CreepRaider = {
         
         let result;
 
-        if(creep.room != targetFlag.room)
-            result = UtilityCreepActions.moveToTargetFlag(creep, currentRoom, targetFlag);
-            if(result != -400)
-                return;
+        result = UtilityCreepActions.moveToTargetFlag(creep, currentRoom, targetFlag);
+        if(result != -400)
+            return;
         
         result = RaiderUtility.selfHeal(creep);
 
         result = RaiderUtility.attackHostileCreepInRange(creep, 7);
+        if(result == OK)
+            return;
+
+        result = RaiderUtility.harvestEnergySource(creep, creepCounter);
         if(result == OK || result == ERR_NOT_IN_RANGE)
             return;
 
-        result = RaiderUtility.harvestEnergySource(creep, sourceCounter);
-        if(result == OK || result == ERR_NOT_IN_RANGE)
-            return;
     }
 };
 
@@ -36,38 +36,45 @@ class RaiderUtility{
     }
     
     static attackHostileCreepInRange(creep, range){
-        let hostileCreeps = creep.pos.findInRange(FIND_HOSTILE_CREEPS, range);
+        let hostileCreep = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         let result;
         
-        if(hostileCreeps.length == 0)
+        if(!hostileCreep || creep.pos.getRangeTo(hostileCreep) > range)
             return ERR_INVALID_TARGET;
-        
-        if(hostileCreeps[0].hits < 200 || creep.hits == creep.hitsMax)
-            result = creep.attack(hostileCreeps[0]);
-        
+
+        if(hostileCreep.hits < 200 || creep.hits >= creep.hitsMax / 2)
+            result = creep.attack(hostileCreep);
+
         if(result == ERR_NOT_IN_RANGE){
-            creep.rangedAttack(hostileCreeps[0]);
+            creep.rangedAttack(hostileCreep);
         }
-        
-        result = creep.moveTo(hostileCreeps[0]);
-        
+
+        result = creep.moveTo(hostileCreep);
+
         return result;
     }
+
+    static moveOnContainer(creep, source){
+        let container = source.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: s => s.structureType == STRUCTURE_CONTAINER
+        })
+
+        if(creep.pos.getRangeTo(container) > 0)
+            creep.moveTo(container);
+    }
+
 
     static harvestEnergySource(creep, creepCounter){
         let energySources = creep.room.find(FIND_SOURCES);
         let sourceNo = creep.memory.sourceNo % energySources.length;
         let result;
 
+        RaiderUtility.moveOnContainer(creep, energySources[sourceNo]);
+
         if(energySources.length < sourceNo)
             return ERR_INVALID_TARGET;
 
         result = creep.harvest(energySources[sourceNo]);
-
-        if(result == ERR_NOT_IN_RANGE){
-            creep.moveTo(energySources[sourceNo]);
-            result = creep.harvest(energySources[sourceNo]);
-        }
 
         return result;
     }

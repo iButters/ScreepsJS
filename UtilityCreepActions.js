@@ -313,11 +313,11 @@ class UtilityCreepActions {
 		let controller = creep.room.controller;
 		let result;
 		
-		result = creep.upgradeController(controller);
+		result = creep.buildClosestStructure(controller);
 		
 		if(result == ERR_NOT_IN_RANGE){
 			creep.moveTo(controller);
-			result = creep.upgradeController(controller); 
+			result = creep.buildClosestStructure(controller);
 		}
 		
 		return result;

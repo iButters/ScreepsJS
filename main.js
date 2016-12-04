@@ -4,17 +4,16 @@ let SpawnManager = require('SpawnManager');
 let SourceManager = require('SourceManager');
 let StructureTowers = require('StructureTower');
 let StructureLinks = require('StructureLink');
-let Creeps = {
-    'Harvester': require('CreepHarvester'), 'Miner': require('CreepMiner'),         'Distributor': require('CreepDistributor'), 
-    'Repairer': require('CreepRepairer'),   'Builder': require('CreepBuilder'),     'Upgrader': require('CreepUpgrader'),
-    'Claimer': require('CreepClaimer'),     'Defender': require('CreepDefender'),   'DamageDealer': require('CreepDamageDealer'),
-    'Healer': require('CreepHealer'),       'Trader' : require('CreepTrader'),      'Hauler' : require('CreepHauler'),
-    'Raider': require('CreepRaider')
-};
 
+let Harvester =  require('Harvester');
+let Creeps = {
+    'Harvester': require('Harvester'),  'Hauler': require('Hauler'),        'Distributor': require('Distributor'),
+    'Builder': require('Builder'),      'Repairer': require('Repairer'),    'Upgrader': require('Upgrader'),
+    'Miner': require('Miner'),          'Defender': require('Defender'),    'LairHarvester': require('LairHarvester')
+};
 module.exports.loop = function () {
     cleanUpCreepsFromMemory();
-    
+
     for(let myRoomName in myRooms){
         let myRoom = Game.rooms[myRoomName];
         let myFlags = myRooms[myRoomName];
@@ -36,15 +35,9 @@ module.exports.loop = function () {
             let sourceManager = SourceManager.prototype.getInstanceOf(myFlag.room);
             
             for(let myRoleName in myRoles){
-                let myCreeps = _.filter(Game.creeps, function(c) { return c.memory.homeRoom == myRoomName && c.memory.targetFlag == myFlagName && c.memory.role == myRoleName })
+                let myCreeps = _.filter(Game.creeps, function(c) { return c.memory.homeRoom == myRoomName
+                    && c.memory.targetFlag == myFlagName && c.memory.role == myRoleName })
                 let amountOf = myCreeps.length;
-                
-                let sourceCounter = 0;
-                for(let myCreep of myCreeps){
-                        let MyCreep = Creeps[myRoleName];
-
-                        MyCreep.run(myCreep, sourceCounter++);
-                }
                 
                 let amountToSpawn = myRoles[myRoleName];
                 
@@ -52,10 +45,21 @@ module.exports.loop = function () {
                     spawnManager.addToSpawnStack(myRoomName, myFlagName, myRoleName);
             }
         }
-        
+
+        if(!Memory.myCreeps)
+            Memory.myCreeps = new Array();
+
         spawnManager.sortSpawnStack();
         spawnManager.spawnFromStack();
         spawnManager.flush();
+
+        let myCreeps = Memory.myCreeps;
+        for(let myCreep of myCreeps){
+            if(Game.creeps[myCreep.creepName]) {
+                let creep = _.create(Creeps[myCreep.role].prototype, myCreep);
+                creep.run();
+            }
+        }
     }    
 }
 
@@ -65,5 +69,10 @@ let cleanUpCreepsFromMemory = function () {
             delete Memory.creeps[name];
             console.log('Clearing non-existing creep from memory:', name);
         }
+    }
+
+    for(let creep in Memory.myCreeps){
+        if(!Game.creeps[Memory.myCreeps[creep].creepName])
+            Memory.myCreeps.splice(creep, 1);
     }
 }

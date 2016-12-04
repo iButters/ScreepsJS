@@ -1,13 +1,18 @@
 const {flagPriorities, rolePriorities, amountToSpawn, bodyparts} = require('Settings');
 const amountOfExtensionsAtLevel = {0: 0, 1: 0, 2: 5, 3: 10, 4: 20, 5: 30, 6: 40, 7: 50, 8: 60};
 
+let Creeps = {
+    'Harvester': require('Harvester'),  'Hauler': require('Hauler'),        'Distributor': require('Distributor'),
+    'Builder': require('Builder'),      'Repairer': require('Repairer'),    'Upgrader': require('Upgrader'),
+    'Miner': require('Miner'),          'Defender': require('Defender'),    'LairHarvester': require('LairHarvester')
+};
+
 class SpawnManager {
     constructor(myRoom){
         this.mySpawns = myRoom.find(FIND_MY_SPAWNS);
         this.amountOfExtensions = myRoom.find(FIND_MY_STRUCTURES, { filter: s => s.structureType == STRUCTURE_EXTENSION}).length;
         this.myRoomControllerLevel = myRoom.controller.level;
         this.spawnStack = new Array();
-        this.renewStack = new Array();
     }
     
     addToSpawnStack(myHomeRoom, myFlagName, myRole){
@@ -43,7 +48,7 @@ class SpawnManager {
                 
                 let newCreep;
                 
-                if(spawn.canCreateCreep(bodyparts) == 0){
+                if(spawn.canCreateCreep(bodyparts) == OK){
                     newCreep = spawn.createCreep(bodyparts, undefined);
                     
                     Game.creeps[newCreep].memory.role = myRole;
@@ -51,7 +56,9 @@ class SpawnManager {
                     Game.creeps[newCreep].memory.targetFlag = targetFlag;
                     
                     this.applySourceNo(Game.creeps[newCreep]);
-                    
+
+                    this.storeCreepToMemory(newCreep, myRole, homeRoom, targetFlag);
+
                     console.log('Spawned new Creep: ' + myRole + '[' + newCreep + ']' + ' - ' + homeRoom + '-' + targetFlag);
                 }else {
                     this.spawnStack.push(creepToSpawn);
@@ -59,7 +66,16 @@ class SpawnManager {
             }
         }
     }
-    
+
+    //TODO: Too expensive - Accesses memory far too often
+    storeCreepToMemory(newCreep, role, homeRoom, targetFlag){
+        let myCreep = Memory.myCreeps;
+
+        myCreep.push(new Creeps[role](newCreep, homeRoom, targetFlag, role));
+        console.log(newCreep);
+        Memory.myCreeps = myCreep;
+    }
+
     createBodyparts(myRole){
         let bodypartTypes  = Object.keys(bodyparts[myRole]['Level' + this.myRoomControllerLevel]);
         let bodypartsArray = new Array();
@@ -70,7 +86,7 @@ class SpawnManager {
             for(let i = 0; i < amountToAdd; i++)
                 bodypartsArray.push(bodypartType);
         }
-        
+
         return bodypartsArray;
     }
     
@@ -78,10 +94,13 @@ class SpawnManager {
         let role = myCreep.memory.role;
         let targetFlag = myCreep.memory.targetFlag;
         
-        if(role != "Distributor" && role != "Harvester" && role != 'Raider')
+        if(role != "Hauler" && role != "Harvester" && role != 'LairHarvester')
             return null;
         
-        let creeps = _.filter(Game.creeps, function(c){ return c.memory.role == role && c.memory.targetFlag == targetFlag && c.name != myCreep.name; });
+        let creeps = _.filter(Game.creeps, function(c){ return c.memory.role == role
+            && c.memory.targetFlag == targetFlag
+            && c.name != myCreep.name;
+        });
         let isApplied = new Array();
         
         for(let i = 0; i < 10; i++){
